@@ -20,7 +20,7 @@ import java.util.Set;
 public class JwtAuthFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     private static final Map<String, Set<String>> AUTH_USER_MAP = Map.of(
-            "/userCodeSubmissions", Set.of("POST")
+            "/userCodeSubmissions", Set.of("POST", "GET")
     );
 
     private static final Map<String, Set<String>> AUTH_ADMIN_MAP = Map.of(
@@ -37,7 +37,7 @@ public class JwtAuthFilter implements ContainerRequestFilter, ContainerResponseF
         String path = requestContext.getUriInfo().getPath();
         String method = requestContext.getMethod();
 
-        if (!requiresAuthUser(method, path) || !requiresAuthAdmin(method, path)) {
+        if (!(requiresAuthUser(method, path) || requiresAuthAdmin(method, path))) {
             return;
         }
 
@@ -62,6 +62,7 @@ public class JwtAuthFilter implements ContainerRequestFilter, ContainerResponseF
         }
 
         //TODO 管理员鉴权后面再说
+        System.out.println("用户访问id="+userId);
 
         UserContext.setCurrentUserId(userId);
     }
