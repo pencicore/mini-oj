@@ -29,6 +29,9 @@ public class ProblemDetailService {
         if (managedEntity == null) {
             return null;
         }
+        entityManager.createQuery("delete from ProblemTestSampleEntity where problemId = :problemId")
+                .setParameter("problemId", managedEntity.getId())
+                .executeUpdate();
         entityManager.remove(managedEntity);
         return managedEntity;
     }
@@ -49,9 +52,6 @@ public class ProblemDetailService {
         return managedEntity;
     }
 
-    /**
-     * 分页查询
-     */
     public List<ProblemDetailEntity> findPage(int page, int size) {
         if (page < 1) {
             page = 1;
@@ -66,15 +66,10 @@ public class ProblemDetailService {
                 .getResultList();
     }
 
-    /**
-     * 根据id查询
-     */
     public ProblemDetailEntity findById(Long id) {
         if (id == null) {
             return null;
         }
         return entityManager.find(ProblemDetailEntity.class, id);
     }
-
-
 }
