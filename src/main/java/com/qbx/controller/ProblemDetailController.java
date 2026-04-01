@@ -11,7 +11,6 @@ import java.util.List;
 
 @Path("/problemDetails")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class ProblemDetailController {
 
     @Inject
@@ -48,8 +47,6 @@ public class ProblemDetailController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(ProblemDetailEntity problem) {
-        System.out.println("新增");
-        System.out.println(problem);
         if (problem == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("请求体不能为空")
