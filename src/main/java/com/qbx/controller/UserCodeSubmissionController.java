@@ -1,5 +1,6 @@
 package com.qbx.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qbx.auth.UserContext;
 import com.qbx.entity.UserCodeSubmissionEntity;
 import com.qbx.service.UserCodeSubmissionService;
@@ -27,7 +28,7 @@ public class UserCodeSubmissionController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(UserCodeSubmissionEntity submission) {
+    public Response create(UserCodeSubmissionEntity submission) throws JsonProcessingException {
         if (submission == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("请求体不能为空")

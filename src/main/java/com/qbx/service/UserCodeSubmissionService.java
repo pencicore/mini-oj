@@ -1,8 +1,13 @@
 package com.qbx.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qbx.auth.UserContext;
+import com.qbx.client.RedisClient;
+import com.qbx.constant.RedisConstant;
 import com.qbx.entity.UserCodeSubmissionEntity;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -16,12 +21,19 @@ public class UserCodeSubmissionService {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Inject
+    RedisClient redisClient;
+
+    @Inject
+    ObjectMapper mapper;
+
     @Transactional
-    public UserCodeSubmissionEntity create(UserCodeSubmissionEntity submission) {
+    public UserCodeSubmissionEntity create(UserCodeSubmissionEntity submission) throws JsonProcessingException {
         submission.setStatus("PENDING");
         submission.setSubmitTime(LocalDateTime.now());
         submission.setUserId(UserContext.getCurrentUserId());
         entityManager.persist(submission);
+        redisClient.push(RedisConstant.JUDGE_QUEUE, mapper.writeValueAsString(submission));
         return submission;
     }
 

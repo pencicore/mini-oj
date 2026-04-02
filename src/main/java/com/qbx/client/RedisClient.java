@@ -6,8 +6,6 @@ import io.quarkus.redis.datasource.list.ListCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.time.Duration;
-
 @ApplicationScoped
 public class RedisClient {
 
@@ -21,9 +19,7 @@ public class RedisClient {
 
     public String pull(String key) {
         ListCommands<String, String> list = redis.list(String.class);
-        var result = list.brpop(Duration.ofDays(0), key); // 阻塞
-        if (result != null) return result.value();
-        return null;
+        return list.rpop(key);   // 非阻塞
     }
 
 }
