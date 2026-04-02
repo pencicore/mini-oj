@@ -37,6 +37,14 @@ public class UserCodeSubmissionService {
         return submission;
     }
 
+    @Transactional
+    public Boolean updateStatus(Long id, String status) {
+        UserCodeSubmissionEntity submission = entityManager.find(UserCodeSubmissionEntity.class, id);
+        submission.setStatus(status);
+        entityManager.merge(submission);
+        return true;
+    }
+
     public UserCodeSubmissionEntity findById(Long id) {
         if (id == null) return null;
         UserCodeSubmissionEntity codeSubmission = entityManager.find(UserCodeSubmissionEntity.class, id);
