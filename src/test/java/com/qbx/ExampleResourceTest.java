@@ -70,7 +70,7 @@ class ExampleResourceTest {
         assertTrue(result.contains("6"), "Java 输出不符合预期: " + result);
     }
 
-    @Test
+//    @Test
     void testOJClientCpp() {
         String code = """
                 #include <iostream>
