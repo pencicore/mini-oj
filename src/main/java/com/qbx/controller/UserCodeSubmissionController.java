@@ -1,8 +1,9 @@
 package com.qbx.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qbx.auth.UserContext;
+import com.qbx.entity.TestResultEntity;
 import com.qbx.entity.UserCodeSubmissionEntity;
+import com.qbx.service.TestResultService;
 import com.qbx.service.UserCodeSubmissionService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -25,6 +26,9 @@ public class UserCodeSubmissionController {
 
     @Inject
     UserCodeSubmissionService userCodeSubmissionService;
+
+    @Inject
+    TestResultService testResultService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -50,6 +54,22 @@ public class UserCodeSubmissionController {
                     .build();
         }
         return Response.ok(entity).build();
+    }
+
+    /**
+     * 该提交下各测试样例的评测结果（需为提交本人，与 getById 权限一致）
+     */
+    @GET
+    @Path("/{id}/testResults")
+    public Response listTestResults(@PathParam("id") Long id) {
+        UserCodeSubmissionEntity entity = userCodeSubmissionService.findById(id);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("代码提交记录不存在，id=" + id)
+                    .build();
+        }
+        List<TestResultEntity> results = testResultService.findBySubmissionId(id);
+        return Response.ok(results).build();
     }
 
     @GET

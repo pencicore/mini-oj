@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>提交历史 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html">题库</a>
+          <a href="history.html" class="nav-active" aria-current="page">提交历史</a>
+          <a href="admin.html">管理员后台</a>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <header class="page-header">
+        <h1 class="page-title">提交历史</h1>
+        <p class="page-desc">查看最近的代码提交与评测状态。</p>
+      </header>
+      <div id="history-list">
+        <div class="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          加载中…
+        </div>
+      </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script>
+      (function () {
+        const root = document.getElementById("history-list");
+        function escapeHtml(s) {
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+        function statusClass(st) {
+          if (!st) return "";
+          var u = String(st).toUpperCase();
+          if (u === "AC" || u.indexOf("ACCEPT") >= 0) return "status-ac";
+          return "status-wa";
+        }
+        authFetch(apiUrl("/userCodeSubmissions/page?page=1&size=50"))
+          .then(function (r) {
+            if (!r.ok) throw new Error("请求失败 " + r.status);
+            return r.json();
+          })
+          .then(function (rows) {
+            if (!rows || !rows.length) {
+              root.innerHTML = '<div class="empty">暂无提交记录</div>';
+              return;
+            }
+            var html =
+              '<div class="table-wrap"><table class="data-table"><thead><tr>' +
+              "<th>ID</th><th>用户</th><th>题目</th><th>语言</th><th>状态</th><th>提交时间</th>" +
+              "</tr></thead><tbody>";
+            rows.forEach(function (s) {
+              html +=
+                '<tr><td class="cell-num"><a class="title-link" href="submission-detail.html?id=' +
+                s.id +
+                '">' +
+                s.id +
+                "</a></td><td>" +
+                s.userId +
+                '</td><td><a class="title-link" href="problem-detail.html?id=' +
+                s.problemId +
+                '">#' +
+                s.problemId +
+                "</a></td><td>" +
+                escapeHtml(s.language || "") +
+                '</td><td><span class="status-pill ' +
+                statusClass(s.status) +
+                '">' +
+                escapeHtml(s.status || "") +
+                "</span></td><td>" +
+                escapeHtml(s.submitTime || "") +
+                "</td></tr>";
+            });
+            html += "</tbody></table></div>";
+            root.innerHTML = html;
+          })
+          .catch(function (e) {
+            root.innerHTML =
+              '<div class="form-error">加载失败：' + escapeHtml(e.message) + "</div>";
+          });
+      })();
+    </script>
+  </body>
+</html>

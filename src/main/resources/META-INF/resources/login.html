@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>登录 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body data-page="login">
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html">题库</a>
+          <a href="history.html">提交历史</a>
+          <a href="admin.html">管理员后台</a>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="form-page">
+        <div class="auth-card">
+          <h1>登录</h1>
+          <p class="sub">使用用户名与密码登录，登录后可使用需要身份的功能。</p>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="username">用户名</label>
+              <input id="username" name="username" type="text" autocomplete="username" required />
+            </div>
+            <div class="form-group">
+              <label for="password">密码</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit">登录</button>
+            </div>
+            <div id="msg"></div>
+          </form>
+          <p class="form-footer-link">没有账号？<a href="register.html">注册</a></p>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script>
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var msg = document.getElementById("msg");
+        msg.innerHTML = "";
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value;
+        authFetch(apiUrl("/users/login"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username, password: password }),
+        })
+          .then(function (r) {
+            return r.json().then(function (data) {
+              return { ok: r.ok, status: r.status, data: data };
+            });
+          })
+          .then(function (res) {
+            if (!res.ok) {
+              var err =
+                typeof res.data === "string"
+                  ? res.data
+                  : res.data && res.data.message
+                    ? res.data.message
+                    : "登录失败（" + res.status + "）";
+              msg.innerHTML = '<div class="form-error">' + err + "</div>";
+              return;
+            }
+            var d = res.data;
+            if (d.token) localStorage.setItem("token", d.token);
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                id: d.id,
+                username: d.username,
+                userTpye: d.userTpye,
+              })
+            );
+            msg.innerHTML = '<div class="form-success">登录成功，正在跳转…</div>';
+            setTimeout(function () {
+              window.location.href = "index.html";
+            }, 600);
+          })
+          .catch(function (err) {
+            msg.innerHTML =
+              '<div class="form-error">网络错误：' + (err.message || "") + "</div>";
+          });
+      });
+    </script>
+  </body>
+</html>

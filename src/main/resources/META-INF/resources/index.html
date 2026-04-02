@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>题库 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html" class="nav-active" aria-current="page">题库</a>
+          <a href="history.html">提交历史</a>
+          <a href="admin.html">管理员后台</a>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <header class="page-header">
+        <h1 class="page-title">题库</h1>
+        <p class="page-desc">浏览全部题目，点击标题进入题目详情。</p>
+      </header>
+      <div id="problem-list">
+        <div class="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          加载中…
+        </div>
+      </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script>
+      (function () {
+        const root = document.getElementById("problem-list");
+        authFetch(apiUrl("/problemDetails/page?page=1&size=50"))
+          .then(function (r) {
+            if (!r.ok) throw new Error("请求失败 " + r.status);
+            return r.json();
+          })
+          .then(function (rows) {
+            if (!rows || !rows.length) {
+              root.innerHTML = '<div class="empty">暂无题目</div>';
+              return;
+            }
+            var html =
+              '<div class="table-wrap"><table class="data-table"><thead><tr>' +
+              '<th>#</th><th>标题</th><th>时间限制</th><th>内存限制</th>' +
+              "</tr></thead><tbody>";
+            rows.forEach(function (p) {
+              html +=
+                '<tr><td class="cell-num">' +
+                p.id +
+                '</td><td><a class="title-link" href="problem-detail.html?id=' +
+                p.id +
+                '">' +
+                escapeHtml(p.title || "") +
+                "</a></td><td>" +
+                (p.timeLimit != null ? p.timeLimit + " ms" : "—") +
+                "</td><td>" +
+                (p.memoryLimit != null ? p.memoryLimit + " MB" : "—") +
+                "</td></tr>";
+            });
+            html += "</tbody></table></div>";
+            root.innerHTML = html;
+          })
+          .catch(function (e) {
+            root.innerHTML =
+              '<div class="form-error">加载失败：' + escapeHtml(e.message) + "</div>";
+          });
+
+        function escapeHtml(s) {
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+      })();
+    </script>
+  </body>
+</html>

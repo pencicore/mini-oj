@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>编辑题目 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html">题库</a>
+          <a href="history.html">提交历史</a>
+          <a href="admin.html">管理员后台</a>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-edit">
+      <a class="back-link" href="admin.html">返回管理员题库</a>
+      <div id="edit-root" class="edit-root">
+        <div class="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          加载中…
+        </div>
+      </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/problem-edit.js"></script>
+  </body>
+</html>
