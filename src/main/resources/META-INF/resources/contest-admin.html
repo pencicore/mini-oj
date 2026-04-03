@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>比赛管理 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body data-page="contest-admin">
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html">题库</a>
+          <a href="history.html">提交历史</a>
+          <a href="contests.html">比赛</a>
+          <span id="nav-admin-slot"></span>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div id="admin-warn" class="admin-warn" style="display: none"></div>
+
+      <header class="page-header page-header--with-action">
+        <div class="page-header-text">
+          <h1 class="page-title">比赛管理</h1>
+          <p class="page-desc">创建比赛并维护开始、结束与封榜时间；题目 ID 用英文逗号分隔，可为空。</p>
+        </div>
+      </header>
+
+      <section
+        class="detail-card edit-card-problem"
+        style="max-width: 1120px; margin: 0 auto 1.5rem"
+      >
+        <h2 class="edit-card-heading">新建比赛</h2>
+        <form id="contest-create-form" class="contest-create-form">
+          <div class="form-row-inline">
+            <div class="form-group" style="flex: 1 1 200px">
+              <label for="contest-title">标题</label>
+              <input id="contest-title" name="title" type="text" required maxlength="200" placeholder="例如：春季练习赛" />
+            </div>
+          </div>
+          <div class="form-row-inline">
+            <div class="form-group" style="flex: 1 1 200px">
+              <label for="contest-start">开始时间</label>
+              <input id="contest-start" name="startTime" type="datetime-local" required />
+            </div>
+            <div class="form-group" style="flex: 1 1 200px">
+              <label for="contest-end">结束时间</label>
+              <input id="contest-end" name="endTime" type="datetime-local" required />
+            </div>
+            <div class="form-group" style="flex: 1 1 200px">
+              <label for="contest-freeze">封榜时间（可选）</label>
+              <input id="contest-freeze" name="freezeTime" type="datetime-local" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contest-problems">题目 ID 列表（可选）</label>
+            <input
+              id="contest-problems"
+              name="problemIds"
+              type="text"
+              placeholder="例如：1, 2, 3"
+              autocomplete="off"
+            />
+          </div>
+          <div id="contest-form-msg" class="form-msg" style="display: none" aria-live="polite"></div>
+          <div class="form-actions">
+            <button type="submit" class="btn-submit-code">创建比赛</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="contest-list" style="max-width: 1120px; margin: 0 auto">
+        <div class="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          加载中…
+        </div>
+      </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/contest-admin.js"></script>
+  </body>
+</html>

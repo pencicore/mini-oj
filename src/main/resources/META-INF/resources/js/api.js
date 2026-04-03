@@ -13,6 +13,7 @@
     PROBLEM_DETAILS_PAGE: "/problemDetails/page",
     PROBLEM_TEST_SAMPLES: "/problemTestSamples",
     USER_CODE_SUBMISSIONS: "/userCodeSubmissions",
+    CONTESTS: "/contests",
   };
 
   /** 拼接完整 URL，path 须以 / 开头（低层方法；业务代码请优先用 API.*） */
@@ -92,6 +93,38 @@
     /** POST 新建测试样例 */
     problemTestSamplesCreate: function () {
       return global.apiUrl(PATHS.PROBLEM_TEST_SAMPLES);
+    },
+    contestsPage: function (page, size) {
+      return global.apiUrl(
+        PATHS.CONTESTS +
+          "/page?page=" +
+          encodeURIComponent(String(page)) +
+          "&size=" +
+          encodeURIComponent(String(size))
+      );
+    },
+    contestsCreate: function () {
+      return global.apiUrl(PATHS.CONTESTS);
+    },
+    contestById: function (id) {
+      return global.apiUrl(
+        PATHS.CONTESTS + "/" + encodeURIComponent(String(id))
+      );
+    },
+    contestLeaderboard: function (id, reveal) {
+      var q =
+        reveal === true
+          ? "?reveal=true"
+          : reveal === false
+            ? "?reveal=false"
+            : "";
+      return global.apiUrl(
+        PATHS.CONTESTS +
+          "/" +
+          encodeURIComponent(String(id)) +
+          "/leaderboard" +
+          q
+      );
     },
   };
 

@@ -119,6 +119,12 @@ a:hover {
   gap: 0.25rem 0.5rem;
 }
 
+#nav-admin-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
 .nav-links > a:not(.btn-nav) {
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.9375rem;
@@ -611,6 +617,179 @@ table.data-table {
   gap: 0.35rem;
 }
 
+.contest-problem-links {
+  margin: 0.35rem 0 0;
+  padding-left: 1.25rem;
+  line-height: 1.85;
+}
+
+.contest-standings-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  max-width: 1120px;
+  margin: 0 auto 1rem;
+  padding: 0 0 0 0.25rem;
+}
+
+.contest-standings-nav .back-link {
+  margin-bottom: 0;
+}
+
+.contest-standings-nav-sep {
+  color: var(--muted);
+  user-select: none;
+}
+
+/* —— 排行榜：本人可点头像查看提交（轻量样式，与表格行协调） —— */
+.standings-self-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.1rem 0.35rem 0.1rem 0.1rem;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.standings-self-trigger:hover {
+  background: var(--accent-soft);
+}
+
+.standings-self-trigger:focus-visible {
+  outline: 2px solid var(--icpc-gold);
+  outline-offset: 2px;
+}
+
+.standings-avatar {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #ffffff 0%, #e8eef5 100%);
+  color: var(--icpc-navy);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 1.5px solid rgba(255, 199, 44, 0.85);
+  box-shadow: 0 1px 2px rgba(12, 35, 64, 0.08);
+}
+
+.standings-self-trigger:hover .standings-avatar {
+  border-color: var(--icpc-gold-dark);
+  box-shadow: 0 1px 3px rgba(12, 35, 64, 0.12);
+}
+
+.standings-name {
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px dotted var(--border-strong);
+  padding-bottom: 0.05rem;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.standings-self-trigger:hover .standings-name {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent);
+  border-bottom-style: solid;
+}
+
+.standings-row--self td {
+  vertical-align: middle;
+}
+
+.standings-modal[hidden] {
+  display: none !important;
+}
+
+.standings-modal:not([hidden]) {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.standings-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 35, 64, 0.45);
+  cursor: pointer;
+}
+
+.standings-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 36rem;
+  max-height: min(85vh, 32rem);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.standings-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.standings-modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.standings-modal-close {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.standings-modal-close:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.standings-modal-body {
+  padding: 1rem;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
 .problem-body {
   margin: 0;
   white-space: pre-wrap;
@@ -908,7 +1087,7 @@ table.test-results-table {
   border-color: #334155;
 }
 
-/* —— 管理员后台 —— */
+/* —— 题目管理（admin） —— */
 .admin-warn {
   margin-bottom: 1.25rem;
   padding: 0.85rem 1rem;

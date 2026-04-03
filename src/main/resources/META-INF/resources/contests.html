@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>编辑题目 — Mini OJ</title>
+    <title>比赛 — Mini OJ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,14 +12,14 @@
     />
     <link rel="stylesheet" href="css/common.css" />
   </head>
-  <body>
+  <body data-page="contests">
     <header class="site-header">
       <div class="nav-inner">
         <a href="index.html" class="logo">Mini OJ</a>
         <nav class="nav-links">
           <a href="index.html">题库</a>
           <a href="history.html">提交历史</a>
-          <a href="contests.html">比赛</a>
+          <a href="contests.html" class="nav-active" aria-current="page">比赛</a>
           <span id="nav-admin-slot"></span>
           <span id="nav-auth">
             <a href="login.html">登录</a>
@@ -29,9 +29,12 @@
       </div>
     </header>
 
-    <main class="main-edit">
-      <a class="back-link" href="admin.html">返回题目管理</a>
-      <div id="edit-root" class="edit-root">
+    <main>
+      <header class="page-header">
+        <h1 class="page-title">比赛</h1>
+        <p class="page-desc">查看全部比赛，点击标题进入详情与榜单。</p>
+      </header>
+      <div id="contest-list-root">
         <div class="loading">
           <span class="loading-spinner" aria-hidden="true"></span>
           加载中…
@@ -41,6 +44,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/site.js"></script>
-    <script src="js/problem-edit.js"></script>
+    <script src="js/contests.js"></script>
   </body>
 </html>

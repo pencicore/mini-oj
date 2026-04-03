@@ -101,8 +101,14 @@
     document.head.appendChild(s);
   }
 
-  function renderPage(problem, exampleSamples) {
+  function renderPage(problem, exampleSamples, contestIdStr) {
     var examplesHtml = buildExamplesSection(exampleSamples);
+    var contestBanner =
+      contestIdStr != null
+        ? '<p class="problem-examples-hint">当前从比赛进入，提交将记为<strong>比赛提交</strong>（比赛 id：' +
+          escapeHtml(contestIdStr) +
+          "）。</p>"
+        : "";
     return (
       '<article class="detail-card">' +
       '<h1 class="detail-title">' +
@@ -119,6 +125,7 @@
       examplesHtml +
       '<section class="detail-card code-panel">' +
       '<h2 class="code-panel-title">代码编辑</h2>' +
+      contestBanner +
       '<div class="editor-toolbar">' +
       '<label for="code-lang">语言</label>' +
       '<select id="code-lang" aria-label="选择语言">' +
@@ -137,6 +144,11 @@
 
   var params = new URLSearchParams(window.location.search);
   var id = params.get("id");
+  var contestIdParam = params.get("contestId");
+  var contestIdStr = null;
+  if (contestIdParam != null && /^\d+$/.test(String(contestIdParam).trim())) {
+    contestIdStr = String(contestIdParam).trim();
+  }
   var root = document.getElementById("detail");
 
   if (!id) {
@@ -162,7 +174,7 @@
       var allSamples = tuple[1] || [];
       var exampleSamples = allSamples.filter(readIsExample);
       document.title = escapeHtml(p.title || "题目") + " — Mini OJ";
-      root.innerHTML = renderPage(p, exampleSamples);
+      root.innerHTML = renderPage(p, exampleSamples, contestIdStr);
 
       var langSelect = document.getElementById("code-lang");
       var host = document.getElementById("monaco-host");
@@ -202,7 +214,11 @@
             problemId: Number(id),
             code: editor.getValue(),
             language: LANG_KEY[k],
+            contestSubmission: contestIdStr != null,
           };
+          if (contestIdStr != null) {
+            body.contestId = Number(contestIdStr);
+          }
           btn.disabled = true;
           authFetch(API.userCodeSubmissionsCreate(), {
             method: "POST",

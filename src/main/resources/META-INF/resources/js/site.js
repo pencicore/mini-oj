@@ -31,12 +31,15 @@
     }
     slot.style.display = "";
     var page = document.body && document.body.getAttribute("data-page");
-    if (page === "admin") {
-      slot.innerHTML =
-        '<a href="admin.html" class="nav-active" aria-current="page">管理员后台</a>';
-    } else {
-      slot.innerHTML = '<a href="admin.html">管理员后台</a>';
-    }
+    var adminLink =
+      page === "admin"
+        ? '<a href="admin.html" class="nav-active" aria-current="page">题目管理</a>'
+        : '<a href="admin.html">题目管理</a>';
+    var contestLink =
+      page === "contest-admin"
+        ? '<a href="contest-admin.html" class="nav-active" aria-current="page">比赛管理</a>'
+        : '<a href="contest-admin.html">比赛管理</a>';
+    slot.innerHTML = adminLink + contestLink;
   }
 
   function guestAuthHtml() {
