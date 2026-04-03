@@ -6,14 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qbx.client.GoJudgeClient;
 import com.qbx.client.RedisClient;
 import com.qbx.constant.RedisConstant;
-import com.qbx.entity.ProblemDetailEntity;
-import com.qbx.entity.ProblemTestSampleEntity;
-import com.qbx.entity.TestResultEntity;
-import com.qbx.entity.UserCodeSubmissionEntity;
-import com.qbx.service.ProblemDetailService;
-import com.qbx.service.ProblemTestSampleService;
-import com.qbx.service.TestResultService;
-import com.qbx.service.UserCodeSubmissionService;
+import com.qbx.entity.*;
+import com.qbx.service.*;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -43,6 +37,9 @@ public class JudgeListen {
 
     @Inject
     TestResultService testResultService;
+
+    @Inject
+    ContestActionService contestActionService;
 
     @Scheduled(every = "1s")
     public void poll() {
@@ -93,7 +90,6 @@ public class JudgeListen {
             String expectedOut = test.getExpectedOutput() != null ? test.getExpectedOutput() : "";
 
             String ojStatus = judgeStatus(gjStatus, stdout, expectedOut);
-
             if ("AC".equals(endStatus)) {
                 endStatus = ojStatus;
             }
@@ -110,6 +106,15 @@ public class JudgeListen {
             tr.setTimeUsed((int) (timeNs / 1_000_000L));
             tr.setMemoryUsed((int) memBytes);
             testResultService.create(tr);
+        }
+        if (submission.isContestSubmission() && submission.getContestId() != null) {
+            ContestActionEntity action = new ContestActionEntity();
+            action.setContestId(submission.getContestId());
+            action.setProblemId(submission.getProblemId());
+            action.setSubmissionId(submission.getId());
+            action.setUserId(submission.getUserId());
+            action.setJudgeStatus(endStatus);
+            contestActionService.create(action);
         }
         userCodeSubmissionService.updateStatus(submission.getId(), endStatus);
     }

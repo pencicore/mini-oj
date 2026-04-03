@@ -29,6 +29,12 @@ public class UserCodeSubmissionService {
 
     @Transactional
     public UserCodeSubmissionEntity create(UserCodeSubmissionEntity submission) throws JsonProcessingException {
+        if (submission.getContestId() == null) {
+            submission.setContestSubmission(false);
+        }
+        if (!Boolean.TRUE.equals(submission.getContestSubmission())) {
+            submission.setContestId(null);
+        }
         submission.setStatus("PENDING");
         submission.setSubmitTime(LocalDateTime.now());
         submission.setUserId(UserContext.getCurrentUserId());

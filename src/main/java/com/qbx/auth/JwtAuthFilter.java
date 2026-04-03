@@ -20,7 +20,8 @@ import java.util.Set;
 public class JwtAuthFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     private static final Map<String, Set<String>> AUTH_USER_MAP = Map.of(
-            "/userCodeSubmissions", Set.of("POST", "GET")
+            "/userCodeSubmissions", Set.of("POST", "GET"),
+            "/contestActions", Set.of("POST", "GET", "PUT", "DELETE")
     );
 
     private static final Map<String, Set<String>> AUTH_ADMIN_MAP = Map.of(

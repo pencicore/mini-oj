@@ -35,10 +35,19 @@ public class UserCodeSubmissionEntity {
     @Column(name = "submit_time", nullable = false)
     private LocalDateTime submitTime;
 
+    /**
+     * 是否为比赛提交（普通练习题为 false）。
+     */
+    @Column(name = "contest_submission", nullable = false, columnDefinition = "boolean default false")
+    private Boolean contestSubmission;
+
+    @Column(name = "contest_id")
+    private Long contestId;
+
     public UserCodeSubmissionEntity() {
     }
 
-    public UserCodeSubmissionEntity(Long id, Long userId, Long problemId, String code, String language, String status, LocalDateTime submitTime) {
+    public UserCodeSubmissionEntity(Long id, Long userId, Long problemId, String code, String language, String status, LocalDateTime submitTime, boolean contestSubmission, Long contestId) {
         this.id = id;
         this.userId = userId;
         this.problemId = problemId;
@@ -46,6 +55,8 @@ public class UserCodeSubmissionEntity {
         this.language = language;
         this.status = status;
         this.submitTime = submitTime;
+        this.contestSubmission = contestSubmission;
+        this.contestId = contestId;
     }
 
     /**
@@ -160,7 +171,31 @@ public class UserCodeSubmissionEntity {
         this.submitTime = submitTime;
     }
 
+    public boolean isContestSubmission() {
+        return contestSubmission;
+    }
+
+    public void setContestSubmission(boolean contestSubmission) {
+        this.contestSubmission = contestSubmission;
+    }
+
+    public Long getContestId() {
+        return contestId;
+    }
+
+    public void setContestId(Long contestId) {
+        this.contestId = contestId;
+    }
+
     public String toString() {
-        return "UserCodeSubmissionEntity{id = " + id + ", userId = " + userId + ", problemId = " + problemId + ", language = " + language + ", status = " + status + ", submitTime = " + submitTime + "}";
+        return "UserCodeSubmissionEntity{id = " + id + ", userId = " + userId + ", problemId = " + problemId + ", language = " + language + ", status = " + status + ", submitTime = " + submitTime + ", contestSubmission = " + contestSubmission + ", contestId = " + contestId + "}";
+    }
+
+    /**
+     * 获取
+     * @return contestSubmission
+     */
+    public Boolean getContestSubmission() {
+        return contestSubmission;
     }
 }
