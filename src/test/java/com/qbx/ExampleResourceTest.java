@@ -70,19 +70,23 @@ class ExampleResourceTest {
         assertTrue(result.contains("6"), "Java 输出不符合预期: " + result);
     }
 
-//    @Test
+    @Test
     void testOJClientCpp() {
         String code = """
-                #include <iostream>
-                using namespace std;
+#include <iostream>
+using namespace std;
 
-                int main() {
-                    int a, b;
-                    cin >> a >> b;
-                    cout << a + b << endl;
-                    cout << a + b + a + b << endl;
-                    return 0;
-                }
+int main() {
+    // 必须加 {}
+    for(int i=1;i<=1000000;i++) {
+        int k=10+i;
+        // 第二个循环放在里面
+        for(int j=1;j<=100;j++) {
+            cout << k+j << endl;
+        }
+    }
+    return 0;
+}
                 """;
 
         String input = "1 2\n";

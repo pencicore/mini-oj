@@ -313,6 +313,11 @@ table.data-table {
   box-shadow: inset 3px 0 0 var(--icpc-gold);
 }
 
+.data-table .cell-time {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 .data-table .cell-num {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
@@ -732,6 +737,10 @@ table.data-table {
   margin: 0.15rem 0 0;
   font-weight: 600;
   color: var(--text);
+}
+
+.submission-meta-grid .submission-time {
+  font-variant-numeric: tabular-nums;
 }
 
 .submission-code-label {

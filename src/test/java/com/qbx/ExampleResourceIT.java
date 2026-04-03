@@ -7,7 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
+//@QuarkusTest
 class ExampleResourceIT extends ExampleResourceTest {
 
     @Inject

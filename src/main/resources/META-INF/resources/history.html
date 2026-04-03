@@ -89,9 +89,13 @@
                 statusClass(s.status) +
                 '">' +
                 escapeHtml(s.status || "") +
-                "</span></td><td>" +
-                escapeHtml(s.submitTime || "") +
-                "</td></tr>";
+                "</span></td><td class=\"cell-time\" title=\"" +
+                escapeHtml(String(s.submitTime || "")) +
+                "\"><time datetime=\"" +
+                escapeHtml(String(s.submitTime || "")) +
+                '">' +
+                escapeHtml(formatSubmitTime(s.submitTime)) +
+                "</time></td></tr>";
             });
             html += "</tbody></table></div>";
             root.innerHTML = html;

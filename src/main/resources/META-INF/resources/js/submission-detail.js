@@ -149,9 +149,15 @@
       '">' +
       escapeHtml(st || "—") +
       "</span></dd>" +
-      "<dt>提交时间</dt><dd>" +
-      escapeHtml(s.submitTime || "—") +
-      "</dd>" +
+      "<dt>提交时间</dt><dd><span class=\"submission-time\" title=\"" +
+      escapeHtml(String(s.submitTime || "")) +
+      '">' +
+      escapeHtml(
+        typeof formatSubmitTime === "function"
+          ? formatSubmitTime(s.submitTime)
+          : s.submitTime || "—"
+      ) +
+      "</span></dd>" +
       "<dt>用户 ID</dt><dd>" +
       escapeHtml(String(s.userId != null ? s.userId : "—")) +
       "</dd>" +
