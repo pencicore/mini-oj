@@ -56,9 +56,6 @@ public class UserCodeSubmissionController {
         return Response.ok(entity).build();
     }
 
-    /**
-     * 该提交下各测试样例的评测结果（需为提交本人，与 getById 权限一致）
-     */
     @GET
     @Path("/{id}/testResults")
     public Response listTestResults(@PathParam("id") Long id) {

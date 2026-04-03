@@ -161,6 +161,6 @@ public class UserCodeSubmissionEntity {
     }
 
     public String toString() {
-        return "UserCodeSubmissionEntity{id = " + id + ", userId = " + userId + ", problemId = " + problemId + ", code = " + code + ", language = " + language + ", status = " + status + ", submitTime = " + submitTime + "}";
+        return "UserCodeSubmissionEntity{id = " + id + ", userId = " + userId + ", problemId = " + problemId + ", language = " + language + ", status = " + status + ", submitTime = " + submitTime + "}";
     }
 }
