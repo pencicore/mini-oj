@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>比赛排行榜 — Mini OJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body data-page="contests">
+    <header class="site-header">
+      <div class="nav-inner">
+        <a href="index.html" class="logo">Mini OJ</a>
+        <nav class="nav-links">
+          <a href="index.html">题库</a>
+          <a href="history.html">提交历史</a>
+          <a href="contests.html" class="nav-active" aria-current="page">比赛</a>
+          <span id="nav-admin-slot"></span>
+          <span id="nav-auth">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="btn-nav">注册</a>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="contest-standings-nav">
+        <a class="back-link" href="contests.html">比赛列表</a>
+        <span class="contest-standings-nav-sep" aria-hidden="true">·</span>
+        <a class="back-link" id="standings-link-detail" href="#">比赛详情</a>
+      </div>
+      <div id="contest-standings-root">
+        <div class="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          加载中…
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="standings-my-actions-modal"
+      class="standings-modal"
+      hidden
+      aria-hidden="true"
+    >
+      <div class="standings-modal-backdrop" tabindex="-1"></div>
+      <div
+        class="standings-modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="standings-my-actions-title"
+      >
+        <div class="standings-modal-header">
+          <h2 id="standings-my-actions-title" class="standings-modal-title">我的比赛提交</h2>
+          <button type="button" class="standings-modal-close" aria-label="关闭">
+            &times;
+          </button>
+        </div>
+        <div id="standings-my-actions-body" class="standings-modal-body"></div>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/contest-standings.js"></script>
+  </body>
+</html>
