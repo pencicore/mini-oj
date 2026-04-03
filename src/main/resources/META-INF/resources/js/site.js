@@ -6,6 +6,39 @@
     return div.innerHTML;
   }
 
+  function isAdminUser(u) {
+    if (!u || typeof u !== "object") return false;
+    var t = (u.userTpye || u.userType || "").toLowerCase();
+    return t === "admin";
+  }
+
+  function renderNavAdmin() {
+    var slot = document.getElementById("nav-admin-slot");
+    if (!slot) return;
+    var raw = localStorage.getItem("user");
+    var show = false;
+    if (raw) {
+      try {
+        show = isAdminUser(JSON.parse(raw));
+      } catch (e) {
+        show = false;
+      }
+    }
+    if (!show) {
+      slot.innerHTML = "";
+      slot.style.display = "none";
+      return;
+    }
+    slot.style.display = "";
+    var page = document.body && document.body.getAttribute("data-page");
+    if (page === "admin") {
+      slot.innerHTML =
+        '<a href="admin.html" class="nav-active" aria-current="page">管理员后台</a>';
+    } else {
+      slot.innerHTML = '<a href="admin.html">管理员后台</a>';
+    }
+  }
+
   function guestAuthHtml() {
     var page = document.body && document.body.getAttribute("data-page");
     if (page === "login") {
@@ -55,9 +88,14 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", renderNavAuth);
-  } else {
+  function renderNav() {
     renderNavAuth();
+    renderNavAdmin();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderNav);
+  } else {
+    renderNav();
   }
 })();

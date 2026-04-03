@@ -17,6 +17,53 @@
     return d.innerHTML;
   }
 
+  function readIsExample(s) {
+    if (s == null) return false;
+    if (typeof s.isExample === "boolean") return s.isExample;
+    if (typeof s.example === "boolean") return s.example;
+    return !!s.isExample;
+  }
+
+  function buildExamplesSection(samples) {
+    if (!samples || !samples.length) {
+      return "";
+    }
+    var sorted = samples.slice().sort(function (a, b) {
+      var x = a.id != null ? a.id : 0;
+      var y = b.id != null ? b.id : 0;
+      return x - y;
+    });
+    var blocks = "";
+    sorted.forEach(function (s, i) {
+      var inn = s.input != null ? s.input : "";
+      var out = s.expectedOutput != null ? s.expectedOutput : "";
+      blocks +=
+        '<div class="problem-example-item">' +
+        '<h3 class="problem-example-title">样例 ' +
+        (i + 1) +
+        "</h3>" +
+        '<div class="sample-io-row">' +
+        '<div class="form-group problem-example-io">' +
+        "<label>输入</label>" +
+        '<pre class="sample-io-pre">' +
+        escapeHtml(inn) +
+        "</pre></div>" +
+        '<div class="form-group problem-example-io">' +
+        "<label>输出</label>" +
+        '<pre class="sample-io-pre">' +
+        escapeHtml(out) +
+        "</pre></div>" +
+        "</div></div>";
+    });
+    return (
+      '<section class="detail-card problem-examples-card">' +
+      '<h2 class="code-panel-title">样例</h2>' +
+      '<p class="problem-examples-hint">以下为管理员设置为「题目页展示」的样例。</p>' +
+      blocks +
+      "</section>"
+    );
+  }
+
   var monacoLoading = false;
   function loadMonaco(callback) {
     if (typeof window.monaco !== "undefined" && window.monaco.editor) {
@@ -54,7 +101,8 @@
     document.head.appendChild(s);
   }
 
-  function renderPage(problem) {
+  function renderPage(problem, exampleSamples) {
+    var examplesHtml = buildExamplesSection(exampleSamples);
     return (
       '<article class="detail-card">' +
       '<h1 class="detail-title">' +
@@ -68,6 +116,7 @@
       '<div class="problem-body">' +
       escapeHtml(problem.content || "（无描述）") +
       "</div></article>" +
+      examplesHtml +
       '<section class="detail-card code-panel">' +
       '<h2 class="code-panel-title">代码编辑</h2>' +
       '<div class="editor-toolbar">' +
@@ -95,15 +144,25 @@
     return;
   }
 
-  authFetch(apiUrl("/problemDetails/" + encodeURIComponent(id)))
-    .then(function (r) {
+  Promise.all([
+    authFetch(apiUrl("/problemDetails/" + encodeURIComponent(id))).then(function (r) {
       if (r.status === 404) throw new Error("题目不存在");
       if (!r.ok) throw new Error("请求失败 " + r.status);
       return r.json();
-    })
-    .then(function (p) {
+    }),
+    authFetch(
+      apiUrl("/problemTestSamples/problem/" + encodeURIComponent(id))
+    ).then(function (r) {
+      if (!r.ok) return [];
+      return r.json();
+    }),
+  ])
+    .then(function (tuple) {
+      var p = tuple[0];
+      var allSamples = tuple[1] || [];
+      var exampleSamples = allSamples.filter(readIsExample);
       document.title = escapeHtml(p.title || "题目") + " — Mini OJ";
-      root.innerHTML = renderPage(p);
+      root.innerHTML = renderPage(p, exampleSamples);
 
       var langSelect = document.getElementById("code-lang");
       var host = document.getElementById("monaco-host");

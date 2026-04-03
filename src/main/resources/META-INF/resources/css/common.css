@@ -620,6 +620,43 @@ table.data-table {
   font-size: 0.9375rem;
 }
 
+.problem-examples-card {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.problem-examples-hint {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.problem-example-item {
+  margin-top: 1.15rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+.problem-example-item:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.problem-example-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.problem-example-io .sample-io-pre {
+  max-height: min(40vh, 280px);
+  overflow: auto;
+  margin: 0.35rem 0 0;
+}
+
 /* —— Monaco 代码编辑区（题目详情） —— */
 .code-panel {
   margin-top: 1.25rem;
