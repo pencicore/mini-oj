@@ -63,7 +63,96 @@
     contest: null,
     allActions: [],
     myUserId: null,
+    timeBarTimerId: null,
   };
+
+  function parseContestInstant(s) {
+    if (s == null || s === "") return null;
+    var str = String(s).trim();
+    var m =
+      /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?/.exec(
+        str
+      );
+    if (!m) return null;
+    return new Date(
+      Number(m[1]),
+      Number(m[2]) - 1,
+      Number(m[3]),
+      Number(m[4]),
+      Number(m[5]),
+      m[6] != null && m[6] !== "" ? Number(m[6]) : 0
+    );
+  }
+
+  function formatRemainMs(ms) {
+    if (ms <= 0) return "00:00:00";
+    var sec = Math.floor(ms / 1000);
+    var h = Math.floor(sec / 3600);
+    var mi = Math.floor((sec % 3600) / 60);
+    var s = sec % 60;
+    function pad(n) {
+      return n < 10 ? "0" + n : "" + n;
+    }
+    if (h >= 24) {
+      var d = Math.floor(h / 24);
+      h = h % 24;
+      return d + " 天 " + pad(h) + ":" + pad(mi) + ":" + pad(s);
+    }
+    return pad(h) + ":" + pad(mi) + ":" + pad(s);
+  }
+
+  function updateContestTimeBarUI() {
+    var contest = state.contest;
+    var fillEl = document.getElementById("contest-time-bar-fill");
+    var phaseEl = document.getElementById("contest-time-bar-phase");
+    var countEl = document.getElementById("contest-time-bar-countdown");
+    var whenEl = document.getElementById("contest-time-bar-when");
+    if (!contest || !fillEl || !phaseEl || !countEl) return;
+    var start = parseContestInstant(contest.startTime);
+    var end = parseContestInstant(contest.endTime);
+    if (!start || !end) return;
+    var now = Date.now();
+    var total = end.getTime() - start.getTime();
+    if (total <= 0) {
+      total = 1;
+    }
+
+    if (whenEl) {
+      whenEl.textContent =
+        "开始 " +
+        (typeof formatSubmitTime === "function"
+          ? formatSubmitTime(contest.startTime)
+          : String(contest.startTime)) +
+        " · 结束 " +
+        (typeof formatSubmitTime === "function"
+          ? formatSubmitTime(contest.endTime)
+          : String(contest.endTime));
+    }
+
+    if (now < start.getTime()) {
+      fillEl.style.width = "0%";
+      phaseEl.textContent = "未开始";
+      countEl.textContent = "距开始 " + formatRemainMs(start.getTime() - now);
+    } else if (now >= end.getTime()) {
+      fillEl.style.width = "100%";
+      phaseEl.textContent = "已结束";
+      countEl.textContent = "比赛已结束";
+    } else {
+      var elapsed = now - start.getTime();
+      var pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+      fillEl.style.width = pct.toFixed(2) + "%";
+      phaseEl.textContent = "进行中";
+      countEl.textContent = "剩余 " + formatRemainMs(end.getTime() - now);
+    }
+  }
+
+  function startContestTimeBarTimer() {
+    if (state.timeBarTimerId) {
+      clearInterval(state.timeBarTimerId);
+    }
+    updateContestTimeBarUI();
+    state.timeBarTimerId = setInterval(updateContestTimeBarUI, 1000);
+  }
 
   function closeModal() {
     if (!modal) return;
@@ -215,7 +304,17 @@
         "</h1>" +
         '<p class="page-desc">实时排名 · 过题数相同时按总罚时（分钟）排序。登录后可在本人一行点击头像查看本场比赛提交记录。</p>' +
         "</div>" +
-        "</header>";
+        "</header>" +
+        '<div class="icpc-time-bar" id="contest-time-bar" aria-label="比赛时间">' +
+        '<div class="icpc-time-bar-rail" role="presentation">' +
+        '<div class="icpc-time-bar-fill" id="contest-time-bar-fill"></div>' +
+        "</div>" +
+        '<div class="icpc-time-bar-row">' +
+        '<span class="icpc-time-bar-phase" id="contest-time-bar-phase">—</span>' +
+        '<span class="icpc-time-bar-countdown" id="contest-time-bar-countdown" aria-live="polite">—</span>' +
+        "</div>" +
+        '<p class="icpc-time-bar-when" id="contest-time-bar-when"></p>' +
+        "</div>";
 
       if (frozen) {
         html +=
@@ -272,6 +371,8 @@
 
       root.innerHTML = html;
 
+      startContestTimeBarTimer();
+
       root.addEventListener("click", function (e) {
         var btn = e.target.closest(".standings-self-trigger");
         if (!btn) return;
@@ -283,4 +384,11 @@
       root.innerHTML =
         '<div class="form-error">' + escapeHtml(e.message || String(e)) + "</div>";
     });
+
+  window.addEventListener("beforeunload", function () {
+    if (state.timeBarTimerId) {
+      clearInterval(state.timeBarTimerId);
+      state.timeBarTimerId = null;
+    }
+  });
 })();

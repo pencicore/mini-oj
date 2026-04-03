@@ -267,25 +267,58 @@ a.btn-submit-code {
   background: var(--icpc-gold);
 }
 
-/* —— 返回链接 —— */
+/* —— 返回：次要按钮样式，易点易辨 —— */
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   margin: 0 0 1.25rem;
+  padding: 0.5rem 1rem 0.5rem 0.75rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--icpc-navy);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
 }
 
 .back-link:hover {
-  color: var(--accent);
+  color: var(--accent-hover);
+  border-color: rgba(11, 92, 171, 0.45);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-md);
+}
+
+.back-link:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.back-link:focus {
+  outline: none;
+}
+
+.back-link:focus-visible {
+  outline: 2px solid var(--icpc-gold);
+  outline-offset: 2px;
 }
 
 .back-link::before {
-  content: "←";
-  font-size: 1rem;
-  opacity: 0.8;
+  content: "";
+  display: block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.1rem;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  opacity: 0.92;
 }
 
 /* —— 表格 —— */
@@ -567,6 +600,287 @@ table.data-table {
   color: var(--accent-hover);
 }
 
+/* —— 新增比赛：题目下拉选择 —— */
+.form-label-block {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+
+.contest-problem-field {
+  position: relative;
+  z-index: 2;
+}
+
+.contest-problem-dropdown {
+  position: relative;
+}
+
+.contest-problem-dd-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.contest-problem-dd-trigger:hover {
+  border-color: var(--accent);
+}
+
+.contest-problem-dd-trigger:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(11, 92, 171, 0.2);
+}
+
+.contest-problem-dropdown.is-open .contest-problem-dd-trigger {
+  border-color: var(--accent);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 0 0 3px rgba(11, 92, 171, 0.15);
+}
+
+.contest-problem-dd-trigger-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.contest-problem-dd-trigger-text.contest-problem-dd-placeholder {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.contest-problem-dd-chevron {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  margin-top: -0.2rem;
+  transition: transform 0.2s ease;
+}
+
+.contest-problem-dropdown.is-open .contest-problem-dd-chevron {
+  transform: rotate(225deg);
+  margin-top: 0.15rem;
+}
+
+.contest-problem-dd-panel {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 120;
+  flex-direction: column;
+  margin-top: -1px;
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(12, 35, 64, 0.12);
+  animation: contest-dd-in 0.18s ease;
+}
+
+@keyframes contest-dd-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contest-problem-dropdown.is-open .contest-problem-dd-panel {
+  display: flex;
+}
+
+.contest-problem-dd-search {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.contest-problem-dd-search input {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.875rem;
+  background: var(--surface);
+}
+
+.contest-problem-dd-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(11, 92, 171, 0.12);
+}
+
+.contest-problem-dd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.65rem;
+  border-top: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.contest-problem-dd-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.contest-problem-dd-done {
+  padding: 0.35rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--icpc-navy);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.contest-problem-dd-done:hover {
+  filter: brightness(1.05);
+}
+
+.contest-problem-list {
+  margin-top: 0;
+  max-height: min(280px, 40vh);
+  overflow: auto;
+  border: none;
+  border-radius: 0;
+  background: #fafbfd;
+}
+
+.contest-problem-list-inner {
+  padding: 0.35rem 0;
+}
+
+.contest-problem-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.contest-problem-row:hover {
+  background: rgba(11, 92, 171, 0.06);
+}
+
+.contest-problem-row input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.contest-problem-row-title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+}
+
+.contest-problem-empty {
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.contest-problem-selected-wrap {
+  margin-top: 1rem;
+}
+
+.contest-problem-selected-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+
+.contest-problem-selected {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.contest-problem-selected-empty {
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.contest-problem-selected-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.contest-problem-selected-item:last-child {
+  border-bottom: none;
+}
+
+.contest-problem-selected-letter {
+  flex-shrink: 0;
+  min-width: 1.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.contest-problem-selected-title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+}
+
+.contest-problem-selected-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.contest-problem-selected-actions .btn-ghost-edit {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
 .form-error {
   margin-top: 0.85rem;
   padding: 0.6rem 0.85rem;
@@ -646,10 +960,11 @@ table.data-table {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.35rem 0.5rem;
+  gap: 0.5rem 0.65rem;
   max-width: 1120px;
-  margin: 0 auto 1rem;
-  padding: 0 0 0 0.25rem;
+  margin: 0 auto 1.15rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .contest-standings-nav .back-link {
@@ -657,8 +972,66 @@ table.data-table {
 }
 
 .contest-standings-nav-sep {
-  color: var(--muted);
+  color: var(--border-strong);
   user-select: none;
+  font-weight: 300;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* —— 排行榜：时间条（简洁） —— */
+.icpc-time-bar {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.icpc-time-bar-rail {
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.icpc-time-bar-fill {
+  height: 100%;
+  width: 0%;
+  min-width: 0;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.icpc-time-bar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+}
+
+.icpc-time-bar-phase {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.icpc-time-bar-countdown {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.icpc-time-bar-when {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.4;
 }
 
 /* —— 排行榜：本人可点头像查看提交（轻量样式，与表格行协调） —— */
