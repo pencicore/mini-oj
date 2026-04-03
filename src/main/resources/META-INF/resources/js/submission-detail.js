@@ -180,7 +180,7 @@
     return;
   }
 
-  authFetch(apiUrl("/userCodeSubmissions/" + encodeURIComponent(sid)))
+  authFetch(API.userCodeSubmission(sid))
     .then(function (r) {
       if (r.status === 401) {
         root.innerHTML =
@@ -199,13 +199,13 @@
       if (!s) return;
       return Promise.all([
         authFetch(
-          apiUrl("/userCodeSubmissions/" + encodeURIComponent(sid) + "/testResults")
+          API.userCodeSubmissionTestResults(sid)
         ).then(function (r) {
           if (!r.ok) return [];
           return r.json();
         }),
         authFetch(
-          apiUrl("/problemTestSamples/problem/" + encodeURIComponent(String(s.problemId)))
+          API.problemTestSamplesByProblem(s.problemId)
         ).then(function (r) {
           if (!r.ok) return [];
           return r.json();

@@ -25,7 +25,8 @@ public class JwtAuthFilter implements ContainerRequestFilter, ContainerResponseF
 
     private static final Map<String, Set<String>> AUTH_ADMIN_MAP = Map.of(
             "/problemDetails", Set.of("POST", "PUT", "DELETE"),
-            "/problemTestSamples", Set.of("POST", "PUT", "DELETE")
+            "/problemTestSamples", Set.of("POST", "PUT", "DELETE"),
+            "/contests", Set.of("POST", "PUT", "DELETE")
     );
 
     @Inject

@@ -2,13 +2,97 @@
   /** 后端 API 根地址（Quarkus 默认端口 8080） */
   global.API_BASE = "http://localhost:8080";
 
-  /** 拼接 API 路径，path 须以 / 开头 */
+  /**
+   * REST 相对路径（不含域名），以 / 开头。
+   * 后端路由变更时只改此处。
+   */
+  var PATHS = {
+    USERS_LOGIN: "/users/login",
+    USERS_REGISTER: "/users/register",
+    PROBLEM_DETAILS: "/problemDetails",
+    PROBLEM_DETAILS_PAGE: "/problemDetails/page",
+    PROBLEM_TEST_SAMPLES: "/problemTestSamples",
+    USER_CODE_SUBMISSIONS: "/userCodeSubmissions",
+  };
+
+  /** 拼接完整 URL，path 须以 / 开头（低层方法；业务代码请优先用 API.*） */
   global.apiUrl = function (path) {
     if (!path) {
       return global.API_BASE;
     }
     var p = path.charAt(0) === "/" ? path : "/" + path;
     return global.API_BASE + p;
+  };
+
+  /** 统一 API 地址构造（与 PATHS 对应） */
+  global.API = {
+    paths: PATHS,
+    usersLogin: function () {
+      return global.apiUrl(PATHS.USERS_LOGIN);
+    },
+    usersRegister: function () {
+      return global.apiUrl(PATHS.USERS_REGISTER);
+    },
+    problemDetailsPage: function (page, size) {
+      return global.apiUrl(
+        PATHS.PROBLEM_DETAILS_PAGE +
+          "?page=" +
+          encodeURIComponent(String(page)) +
+          "&size=" +
+          encodeURIComponent(String(size))
+      );
+    },
+    problemDetail: function (id) {
+      return global.apiUrl(
+        PATHS.PROBLEM_DETAILS + "/" + encodeURIComponent(String(id))
+      );
+    },
+    /** POST 新建题目 */
+    problemDetailsCreate: function () {
+      return global.apiUrl(PATHS.PROBLEM_DETAILS);
+    },
+    userCodeSubmissionsPage: function (page, size) {
+      return global.apiUrl(
+        PATHS.USER_CODE_SUBMISSIONS +
+          "/page?page=" +
+          encodeURIComponent(String(page)) +
+          "&size=" +
+          encodeURIComponent(String(size))
+      );
+    },
+    userCodeSubmission: function (id) {
+      return global.apiUrl(
+        PATHS.USER_CODE_SUBMISSIONS + "/" + encodeURIComponent(String(id))
+      );
+    },
+    userCodeSubmissionTestResults: function (id) {
+      return global.apiUrl(
+        PATHS.USER_CODE_SUBMISSIONS +
+          "/" +
+          encodeURIComponent(String(id)) +
+          "/testResults"
+      );
+    },
+    /** POST 提交代码 */
+    userCodeSubmissionsCreate: function () {
+      return global.apiUrl(PATHS.USER_CODE_SUBMISSIONS);
+    },
+    problemTestSamplesByProblem: function (problemId) {
+      return global.apiUrl(
+        PATHS.PROBLEM_TEST_SAMPLES +
+          "/problem/" +
+          encodeURIComponent(String(problemId))
+      );
+    },
+    problemTestSample: function (sampleId) {
+      return global.apiUrl(
+        PATHS.PROBLEM_TEST_SAMPLES + "/" + encodeURIComponent(String(sampleId))
+      );
+    },
+    /** POST 新建测试样例 */
+    problemTestSamplesCreate: function () {
+      return global.apiUrl(PATHS.PROBLEM_TEST_SAMPLES);
+    },
   };
 
   /**

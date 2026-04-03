@@ -29,7 +29,7 @@
   }
 
   var root = document.getElementById("problem-list");
-  authFetch(apiUrl("/problemDetails/page?page=1&size=100"))
+  authFetch(API.problemDetailsPage(1, 100))
     .then(function (r) {
       if (!r.ok) throw new Error("请求失败 " + r.status);
       return r.json();

@@ -145,13 +145,13 @@
   }
 
   Promise.all([
-    authFetch(apiUrl("/problemDetails/" + encodeURIComponent(id))).then(function (r) {
+    authFetch(API.problemDetail(id)).then(function (r) {
       if (r.status === 404) throw new Error("题目不存在");
       if (!r.ok) throw new Error("请求失败 " + r.status);
       return r.json();
     }),
     authFetch(
-      apiUrl("/problemTestSamples/problem/" + encodeURIComponent(id))
+      API.problemTestSamplesByProblem(id)
     ).then(function (r) {
       if (!r.ok) return [];
       return r.json();
@@ -204,7 +204,7 @@
             language: LANG_KEY[k],
           };
           btn.disabled = true;
-          authFetch(apiUrl("/userCodeSubmissions"), {
+          authFetch(API.userCodeSubmissionsCreate(), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),

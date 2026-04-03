@@ -57,7 +57,7 @@
           if (u === "AC" || u.indexOf("ACCEPT") >= 0) return "status-ac";
           return "status-wa";
         }
-        authFetch(apiUrl("/userCodeSubmissions/page?page=1&size=50"))
+        authFetch(API.userCodeSubmissionsPage(1, 50))
           .then(function (r) {
             if (!r.ok) throw new Error("请求失败 " + r.status);
             return r.json();

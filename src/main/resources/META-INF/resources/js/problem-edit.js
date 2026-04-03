@@ -78,7 +78,7 @@
           memoryLimit:
             parseInt(document.getElementById("f-mem").value, 10) || null,
         };
-        authFetch(apiUrl("/problemDetails"), {
+        authFetch(API.problemDetailsCreate(), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -158,7 +158,7 @@
     if (!listEl) return;
     listEl.innerHTML =
       '<div class="loading" style="padding:1.5rem"><span class="loading-spinner"></span> 加载样例…</div>';
-    authFetch(apiUrl("/problemTestSamples/problem/" + encodeURIComponent(String(problemIdNum))))
+    authFetch(API.problemTestSamplesByProblem(problemIdNum))
       .then(function (r) {
         if (!r.ok) throw new Error("请求失败 " + r.status);
         return r.json();
@@ -239,7 +239,7 @@
         var out = card.querySelector(".sample-field-out").value;
         var isEx = card.querySelector(".sample-cb-example").checked;
         showSampleMsg("", false);
-        authFetch(apiUrl("/problemTestSamples/" + encodeURIComponent(sid)), {
+        authFetch(API.problemTestSample(sid), {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -270,7 +270,7 @@
         var sid2 = card2.getAttribute("data-sample-id");
         if (!confirm("确定删除样例 #" + sid2 + "？")) return;
         showSampleMsg("", false);
-        authFetch(apiUrl("/problemTestSamples/" + encodeURIComponent(sid2)), { method: "DELETE" })
+        authFetch(API.problemTestSample(sid2), { method: "DELETE" })
           .then(function (r) {
             if (r.status === 401) {
               showSampleMsg("未登录或无权删除。", true);
@@ -296,7 +296,7 @@
         var cb = document.getElementById("new-sample-example");
         if (!input || !out) return;
         showSampleMsg("", false);
-        authFetch(apiUrl("/problemTestSamples"), {
+        authFetch(API.problemTestSamplesCreate(), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -408,7 +408,7 @@
         timeLimit: parseInt(document.getElementById("f-time").value, 10) || null,
         memoryLimit: parseInt(document.getElementById("f-mem").value, 10) || null,
       };
-      authFetch(apiUrl("/problemDetails/" + encodeURIComponent(pid)), {
+      authFetch(API.problemDetail(pid), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -451,7 +451,7 @@
     document.getElementById("btn-delete").addEventListener("click", function () {
       if (!confirm("确定删除该题目？其下测试样例也会被一并删除，且不可恢复。")) return;
       msgEl.innerHTML = "";
-      authFetch(apiUrl("/problemDetails/" + encodeURIComponent(pid)), { method: "DELETE" })
+      authFetch(API.problemDetail(pid), { method: "DELETE" })
         .then(function (r) {
           if (r.status === 401) {
             msgEl.innerHTML =
@@ -476,7 +476,7 @@
     loadSamples();
   }
 
-  authFetch(apiUrl("/problemDetails/" + encodeURIComponent(pid)))
+  authFetch(API.problemDetail(pid))
     .then(function (r) {
       if (r.status === 404) {
         root.innerHTML = '<div class="form-error">题目不存在</div>';

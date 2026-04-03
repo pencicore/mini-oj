@@ -46,7 +46,7 @@
     <script>
       (function () {
         const root = document.getElementById("problem-list");
-        authFetch(apiUrl("/problemDetails/page?page=1&size=50"))
+        authFetch(API.problemDetailsPage(1, 50))
           .then(function (r) {
             if (!r.ok) throw new Error("请求失败 " + r.status);
             return r.json();

@@ -61,7 +61,7 @@
         msg.innerHTML = "";
         var username = document.getElementById("username").value.trim();
         var password = document.getElementById("password").value;
-        authFetch(apiUrl("/users/login"), {
+        authFetch(API.usersLogin(), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: username, password: password }),
