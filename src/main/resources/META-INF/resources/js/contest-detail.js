@@ -19,6 +19,66 @@
     return "P" + (i + 1);
   }
 
+  function renderContestPage(contest, contestIdStr, titleByPid) {
+    var title = (contest && contest.title) || "比赛";
+    document.title = title + " — Mini OJ";
+
+    var html = "";
+    html +=
+      '<header class="page-header page-header--with-action">' +
+      '<div class="page-header-text">' +
+      '<h1 class="page-title">' +
+      escapeHtml(title) +
+      "</h1>" +
+      '<p class="page-desc">比赛信息与题目入口；排名请查看排行榜。</p>' +
+      "</div>" +
+      '<a href="contest-standings.html?id=' +
+      encodeURIComponent(contestIdStr) +
+      '" class="btn-submit-code">排行榜</a>' +
+      "</header>" +
+      '<article class="detail-card">' +
+      '<div class="meta-row"><span>开始 ' +
+      escapeHtml(formatSubmitTime(contest.startTime)) +
+      "</span><span>结束 " +
+      escapeHtml(formatSubmitTime(contest.endTime)) +
+      "</span></div>";
+    if (contest.freezeTime != null) {
+      html +=
+        '<div class="meta-row"><span>封榜 ' +
+        escapeHtml(formatSubmitTime(contest.freezeTime)) +
+        "</span></div>";
+    }
+    html += "</article>";
+
+    var pids =
+      contest.problemIds != null && contest.problemIds.length
+        ? contest.problemIds
+        : [];
+    if (pids.length) {
+      html +=
+        '<section class="detail-card" style="margin-top:1rem">' +
+        '<h2 class="code-panel-title">题目</h2><ul class="contest-problem-links">';
+      pids.forEach(function (pid, i) {
+        var pt = titleByPid[String(pid)];
+        if (pt == null || pt === "") {
+          pt = "（无标题）";
+        }
+        var line = problemLabel(i) + " — " + pt;
+        html +=
+          '<li><a class="title-link" href="problem-detail.html?id=' +
+          encodeURIComponent(String(pid)) +
+          "&contestId=" +
+          encodeURIComponent(String(contestIdStr)) +
+          '">' +
+          escapeHtml(line) +
+          "</a></li>";
+      });
+      html += "</ul></section>";
+    }
+
+    root.innerHTML = html;
+  }
+
   var root = document.getElementById("contest-detail-root");
   var cid = parseId();
 
@@ -37,60 +97,32 @@
       return r1.json();
     })
     .then(function (contest) {
-      var title = (contest && contest.title) || "比赛";
-      document.title = title + " — Mini OJ";
-
-      var html = "";
-      html +=
-        '<header class="page-header page-header--with-action">' +
-        '<div class="page-header-text">' +
-        '<h1 class="page-title">' +
-        escapeHtml(title) +
-        "</h1>" +
-        '<p class="page-desc">比赛信息与题目入口；排名请查看排行榜。</p>' +
-        "</div>" +
-        '<a href="contest-standings.html?id=' +
-        encodeURIComponent(cid) +
-        '" class="btn-submit-code">排行榜</a>' +
-        "</header>" +
-        '<article class="detail-card">' +
-        '<div class="meta-row"><span>开始 ' +
-        escapeHtml(formatSubmitTime(contest.startTime)) +
-        "</span><span>结束 " +
-        escapeHtml(formatSubmitTime(contest.endTime)) +
-        "</span></div>";
-      if (contest.freezeTime != null) {
-        html +=
-          '<div class="meta-row"><span>封榜 ' +
-          escapeHtml(formatSubmitTime(contest.freezeTime)) +
-          "</span></div>";
-      }
-      html += "</article>";
-
       var pids =
         contest.problemIds != null && contest.problemIds.length
           ? contest.problemIds
           : [];
-      if (pids.length) {
-        html +=
-          '<section class="detail-card" style="margin-top:1rem">' +
-          '<h2 class="code-panel-title">题目</h2><ul class="contest-problem-links">';
-        pids.forEach(function (pid, i) {
-          html +=
-            '<li><a class="title-link" href="problem-detail.html?id=' +
-            encodeURIComponent(String(pid)) +
-            "&contestId=" +
-            encodeURIComponent(String(cid)) +
-            '">' +
-            escapeHtml(problemLabel(i)) +
-            " — 题目 #" +
-            escapeHtml(String(pid)) +
-            "</a></li>";
-        });
-        html += "</ul></section>";
+      if (!pids.length) {
+        renderContestPage(contest, cid, {});
+        return;
       }
-
-      root.innerHTML = html;
+      return Promise.all(
+        pids.map(function (pid) {
+          return authFetch(API.problemDetail(pid)).then(function (r) {
+            if (!r.ok) {
+              return { pid: pid, title: null };
+            }
+            return r.json().then(function (p) {
+              return { pid: pid, title: p.title };
+            });
+          });
+        })
+      ).then(function (pairs) {
+        var titles = {};
+        pairs.forEach(function (x) {
+          titles[String(x.pid)] = x.title;
+        });
+        renderContestPage(contest, cid, titles);
+      });
     })
     .catch(function (e) {
       root.innerHTML =

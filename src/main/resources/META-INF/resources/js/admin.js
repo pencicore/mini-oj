@@ -42,12 +42,12 @@
       }
       var html =
         '<div class="table-wrap"><table class="data-table"><thead><tr>' +
-        '<th>#</th><th>标题</th><th>时间限制</th><th>内存限制</th>' +
+        '<th>序号</th><th>标题</th><th>时间限制</th><th>内存限制</th>' +
         "</tr></thead><tbody>";
-      rows.forEach(function (p) {
+      rows.forEach(function (p, idx) {
         html +=
           '<tr><td class="cell-num">' +
-          escapeHtml(String(p.id)) +
+          (idx + 1) +
           '</td><td><a class="title-link" href="problem-edit.html?id=' +
           encodeURIComponent(String(p.id)) +
           '">' +

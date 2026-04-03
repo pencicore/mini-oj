@@ -114,7 +114,7 @@
     );
   }
 
-  function renderCard(s, results, samples) {
+  function renderCard(s, results, samples, problemTitle) {
     document.title = "提交 #" + escapeHtml(String(s.id)) + " — Mini OJ";
 
     var st = s.status || "";
@@ -129,6 +129,11 @@
 
     var testHtml = buildTestResultsHtml(results, sampleMap);
 
+    var pTitle =
+      problemTitle != null && String(problemTitle).trim() !== ""
+        ? String(problemTitle).trim()
+        : "（无标题）";
+
     var root = document.getElementById("submission-detail");
     root.innerHTML =
       '<article class="submission-detail-card">' +
@@ -138,8 +143,8 @@
       '<dl class="submission-meta-grid">' +
       "<dt>题目</dt><dd><a href=\"problem-detail.html?id=" +
       encodeURIComponent(String(s.problemId)) +
-      '">#' +
-      escapeHtml(String(s.problemId)) +
+      '">' +
+      escapeHtml(pTitle) +
       "</a></dd>" +
       "<dt>语言</dt><dd>" +
       escapeHtml(s.language || "—") +
@@ -210,8 +215,14 @@
           if (!r.ok) return [];
           return r.json();
         }),
+        authFetch(API.problemDetail(s.problemId)).then(function (r) {
+          if (!r.ok) return null;
+          return r.json();
+        }),
       ]).then(function (pairs) {
-        renderCard(s, pairs[0], pairs[1]);
+        var p = pairs[2];
+        var ptitle = p && p.title != null ? p.title : null;
+        renderCard(s, pairs[0], pairs[1], ptitle);
       });
     })
     .catch(function (e) {

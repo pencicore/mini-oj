@@ -68,11 +68,48 @@
               root.innerHTML = '<div class="empty">暂无提交记录</div>';
               return;
             }
+            var seen = {};
+            var pids = [];
+            rows.forEach(function (s) {
+              var pid = s.problemId;
+              if (pid != null && !seen[pid]) {
+                seen[pid] = true;
+                pids.push(pid);
+              }
+            });
+            return Promise.all(
+              pids.map(function (pid) {
+                return authFetch(API.problemDetail(pid)).then(function (r) {
+                  if (!r.ok) {
+                    return { pid: pid, title: null };
+                  }
+                  return r.json().then(function (p) {
+                    return { pid: pid, title: p.title };
+                  });
+                });
+              })
+            ).then(function (pairs) {
+              var titles = {};
+              pairs.forEach(function (x) {
+                titles[String(x.pid)] = x.title;
+              });
+              return { rows: rows, titles: titles };
+            });
+          })
+          .then(function (data) {
+            if (!data || !data.rows) return;
+            var rows = data.rows;
+            var titles = data.titles || {};
             var html =
               '<div class="table-wrap"><table class="data-table"><thead><tr>' +
               "<th>ID</th><th>用户</th><th>题目</th><th>语言</th><th>状态</th><th>提交时间</th>" +
               "</tr></thead><tbody>";
             rows.forEach(function (s) {
+              var pt = titles[String(s.problemId)];
+              var ptext =
+                pt != null && String(pt).trim() !== ""
+                  ? String(pt).trim()
+                  : "（无标题）";
               html +=
                 '<tr><td class="cell-num"><a class="title-link" href="submission-detail.html?id=' +
                 s.id +
@@ -82,8 +119,8 @@
                 s.userId +
                 '</td><td><a class="title-link" href="problem-detail.html?id=' +
                 s.problemId +
-                '">#' +
-                s.problemId +
+                '">' +
+                escapeHtml(ptext) +
                 "</a></td><td>" +
                 escapeHtml(s.language || "") +
                 '</td><td><span class="status-pill ' +

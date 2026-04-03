@@ -31,7 +31,7 @@
     return "P" + (i + 1);
   }
 
-  function problemLabelForPid(contest, pid) {
+  function problemLetterForPid(contest, pid) {
     var ids = contest.problemIds != null ? contest.problemIds : [];
     var n = Number(pid);
     var idx = -1;
@@ -42,7 +42,7 @@
       }
     }
     if (idx < 0) {
-      return "题目 #" + pid;
+      return "—";
     }
     return problemLabel(idx);
   }
@@ -85,36 +85,71 @@
       return Number(b.id) - Number(a.id);
     });
 
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
     if (!mine.length) {
       modalBody.innerHTML =
         '<p class="problem-examples-hint" style="margin:0">暂无比赛提交记录。</p>';
-    } else {
+      return;
+    }
+
+    var seen = {};
+    var pids = [];
+    mine.forEach(function (a) {
+      var pid = a.problemId;
+      if (pid != null && !seen[pid]) {
+        seen[pid] = true;
+        pids.push(pid);
+      }
+    });
+
+    modalBody.innerHTML =
+      '<div class="loading" style="padding:1rem"><span class="loading-spinner" aria-hidden="true"></span>加载中…</div>';
+
+    Promise.all(
+      pids.map(function (pid) {
+        return authFetch(API.problemDetail(pid)).then(function (r) {
+          if (!r.ok) {
+            return { pid: pid, title: null };
+          }
+          return r.json().then(function (p) {
+            return { pid: pid, title: p.title };
+          });
+        });
+      })
+    ).then(function (pairs) {
+      var titles = {};
+      pairs.forEach(function (x) {
+        titles[String(x.pid)] = x.title;
+      });
       var html =
         '<div class="table-wrap"><table class="data-table"><thead><tr>' +
         "<th>题目</th><th>结果</th><th>提交</th>" +
         "</tr></thead><tbody>";
       mine.forEach(function (a) {
-        var pl = problemLabelForPid(contest, a.problemId);
+        var letter = problemLetterForPid(contest, a.problemId);
+        var pt = titles[String(a.problemId)];
+        var ptStr =
+          pt != null && String(pt).trim() !== ""
+            ? String(pt).trim()
+            : "（无标题）";
+        var cell = letter + ". " + ptStr;
         var st = a.judgeStatus != null ? String(a.judgeStatus) : "—";
         var sid = a.submissionId != null ? String(a.submissionId) : "";
         html +=
           "<tr><td>" +
-          escapeHtml(pl) +
+          escapeHtml(cell) +
           "</td><td>" +
           escapeHtml(st) +
           '</td><td><a class="title-link" href="submission-detail.html?id=' +
           encodeURIComponent(sid) +
-          '">#' +
-          escapeHtml(sid) +
-          "</a></td></tr>";
+          '">查看</a></td></tr>';
       });
       html += "</tbody></table></div>";
       modalBody.innerHTML = html;
-    }
-
-    modal.hidden = false;
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    });
   }
 
   function bindModalEvents() {

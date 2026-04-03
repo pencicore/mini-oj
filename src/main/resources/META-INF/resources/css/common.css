@@ -548,6 +548,25 @@ table.data-table {
   color: var(--muted);
 }
 
+.contest-create-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.35rem;
+}
+
+.contest-create-cancel {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.contest-create-cancel:hover {
+  color: var(--accent-hover);
+}
+
 .form-error {
   margin-top: 0.85rem;
   padding: 0.6rem 0.85rem;

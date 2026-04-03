@@ -333,8 +333,8 @@
       '<div class="edit-page">' +
       '<header class="edit-page-head">' +
       '<h1 class="edit-page-title">编辑题目</h1>' +
-      '<p class="edit-page-meta">题目编号 #' +
-      escapeHtml(String(p.id)) +
+      '<p class="edit-page-meta">' +
+      escapeHtml(p.title || "（无标题）") +
       "</p></header>" +
       '<div class="edit-layout">' +
       '<div class="edit-col edit-col-problem">' +

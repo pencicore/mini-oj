@@ -35,8 +35,9 @@
       page === "admin"
         ? '<a href="admin.html" class="nav-active" aria-current="page">题目管理</a>'
         : '<a href="admin.html">题目管理</a>';
+    var contestAdminActive = page === "contest-admin" || page === "contest-create";
     var contestLink =
-      page === "contest-admin"
+      contestAdminActive
         ? '<a href="contest-admin.html" class="nav-active" aria-current="page">比赛管理</a>'
         : '<a href="contest-admin.html">比赛管理</a>';
     slot.innerHTML = adminLink + contestLink;
