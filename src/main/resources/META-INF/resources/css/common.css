@@ -212,6 +212,26 @@ main {
   margin-bottom: 1.5rem;
 }
 
+.page-header--with-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header--with-action .page-header-text {
+  flex: 1;
+  min-width: 12rem;
+}
+
+a.btn-submit-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .page-title {
   margin: 0 0 0.35rem;
   font-size: clamp(1.375rem, 2.5vw, 1.625rem);
@@ -944,6 +964,10 @@ table.test-results-table {
   .edit-layout {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     gap: 1.5rem;
+  }
+
+  .edit-layout.edit-layout--create {
+    grid-template-columns: minmax(0, 42rem);
   }
 }
 

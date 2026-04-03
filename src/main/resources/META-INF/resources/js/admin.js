@@ -36,7 +36,8 @@
     })
     .then(function (rows) {
       if (!rows || !rows.length) {
-        root.innerHTML = '<div class="empty">暂无题目</div>';
+        root.innerHTML =
+          '<div class="empty">暂无题目。<a class="title-link" href="problem-edit.html?new=1">新建一题</a></div>';
         return;
       }
       var html =

@@ -15,10 +15,128 @@
   var params = new URLSearchParams(window.location.search);
   var pid = params.get("id");
   var root = document.getElementById("edit-root");
-  var problemIdNum = pid != null ? Number(pid) : NaN;
+  var wantsNew =
+    params.get("new") === "1" || params.get("new") === "true";
+  var hasValidId =
+    pid != null && String(pid).trim() !== "" && !isNaN(Number(pid));
+  var problemIdNum = hasValidId ? Number(pid) : NaN;
 
-  if (!pid || isNaN(problemIdNum)) {
-    root.innerHTML = '<div class="form-error">缺少题目 id</div>';
+  function renderCreateForm() {
+    document.title = "新增题目 — Mini OJ";
+    root.innerHTML =
+      '<div class="edit-page">' +
+      '<header class="edit-page-head">' +
+      '<h1 class="edit-page-title">新增题目</h1>' +
+      '<p class="edit-page-meta">保存后将进入编辑页，可继续添加测试样例。</p>' +
+      "</header>" +
+      '<div class="edit-layout edit-layout--create">' +
+      '<div class="edit-col edit-col-problem">' +
+      '<article class="detail-card edit-card-problem">' +
+      '<h2 class="edit-card-heading">题目信息</h2>' +
+      '<form id="problem-create-form">' +
+      '<div class="form-group">' +
+      '<label for="f-title">标题</label>' +
+      '<input id="f-title" name="title" type="text" required />' +
+      "</div>" +
+      '<div class="form-row-inline">' +
+      '<div class="form-group">' +
+      '<label for="f-time">时间限制 (ms)</label>' +
+      '<input id="f-time" name="timeLimit" type="number" min="1" step="1" />' +
+      "</div>" +
+      '<div class="form-group">' +
+      '<label for="f-mem">内存限制 (MB)</label>' +
+      '<input id="f-mem" name="memoryLimit" type="number" min="1" step="1" />' +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group">' +
+      '<label for="f-content">题目描述</label>' +
+      '<textarea id="f-content" name="content" rows="12" class="edit-textarea edit-textarea--desc"></textarea>' +
+      "</div>" +
+      '<div class="edit-toolbar">' +
+      '<button type="submit" class="btn-submit-code">创建题目</button>' +
+      "</div>" +
+      '<div id="edit-msg"></div>' +
+      "</form>" +
+      "</article></div></div></div>";
+
+    var msgEl = document.getElementById("edit-msg");
+    document
+      .getElementById("problem-create-form")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        msgEl.innerHTML = "";
+        var title = document.getElementById("f-title").value.trim();
+        if (!title) {
+          msgEl.innerHTML = '<div class="form-error">请填写标题</div>';
+          return;
+        }
+        var body = {
+          title: title,
+          content: document.getElementById("f-content").value,
+          timeLimit:
+            parseInt(document.getElementById("f-time").value, 10) || null,
+          memoryLimit:
+            parseInt(document.getElementById("f-mem").value, 10) || null,
+        };
+        authFetch(apiUrl("/problemDetails"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        })
+          .then(function (r) {
+            return r.text().then(function (text) {
+              var data;
+              try {
+                data = text ? JSON.parse(text) : null;
+              } catch (err) {
+                data = text;
+              }
+              return { ok: r.ok, status: r.status, data: data };
+            });
+          })
+          .then(function (res) {
+            if (res.status === 401) {
+              msgEl.innerHTML =
+                '<div class="form-error">未登录或 token 无效，请先 <a href="login.html">登录</a>。</div>';
+              return;
+            }
+            if (!res.ok) {
+              var err =
+                typeof res.data === "string"
+                  ? res.data
+                  : res.data && res.data.message
+                    ? res.data.message
+                    : "创建失败（" + res.status + "）";
+              msgEl.innerHTML =
+                '<div class="form-error">' + escapeHtml(err) + "</div>";
+              return;
+            }
+            if (!res.data || res.data.id == null) {
+              msgEl.innerHTML =
+                '<div class="form-error">创建成功但未返回题目 id，请从题库列表进入。</div>';
+              return;
+            }
+            window.location.href =
+              "problem-edit.html?id=" +
+              encodeURIComponent(String(res.data.id));
+          })
+          .catch(function (err) {
+            msgEl.innerHTML =
+              '<div class="form-error">网络错误：' +
+              escapeHtml(err.message || "") +
+              "</div>";
+          });
+      });
+  }
+
+  if (wantsNew && !hasValidId) {
+    renderCreateForm();
+    return;
+  }
+
+  if (!hasValidId) {
+    root.innerHTML =
+      '<div class="form-error">缺少题目 id。<a href="problem-edit.html?new=1" class="title-link">新建题目</a></div>';
     return;
   }
 
